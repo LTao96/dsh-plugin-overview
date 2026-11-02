@@ -1,0 +1,68 @@
+{
+  "name": "dsh-plugin-overview",
+  "version": "0.2.0",
+  "license": "MIT",
+  "description": "Local overview for installed DeepSeek Harness plugins: notes, groups, install dates, health checks, enable/disable and settings shortcuts.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "plugin-overview",
+    "plugin-manager",
+    "local-plugins",
+    "notes",
+    "groups"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "check": "node --check index.js && node --check client.js",
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LTao96/dsh-plugin-overview.git"
+  },
+  "homepage": "https://github.com/LTao96/dsh-plugin-overview#readme",
+  "bugs": {
+    "url": "https://github.com/LTao96/dsh-plugin-overview/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    },
+    "engines": {
+      "dsh": ">=0.2.1-rc.1 <0.3.0-0"
+    }
+  }
+}
