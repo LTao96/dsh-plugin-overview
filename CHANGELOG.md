@@ -1,20 +1,19 @@
-# Changelog
+# 更新记录
 
 ## 0.2.0
 
-- Renamed the package to `dsh-plugin-overview`.
-- Added publish metadata, MIT license, and a compatibility range for DSH 0.2.1-rc.x.
-- Moved state to `$DSH_HOME/plugin-overview/state.json`; existing
-  `$DSH_HOME/plugin-control-center/state.json` or
-  `$DSH_HOME/plugin-dashboard/state.json` is imported once when present.
-- Atomic state writes.
-- Automatic AI summaries are off by default; enable them from the header.
-- New isolated API namespace `/plugin-overview/*`.
-- Main-panel shortcuts and main-sidebar order now resolve from the live
-  `sidebar.panellist` ledger instead of hardcoded B站/Aurabot anchors.
-- Visual-conflict detection uses package names/descriptions/keywords instead of
-  a fixed package list.
-- Group rename uses an inline editor instead of `window.prompt`.
-- Added `node:test` coverage for state normalization and visual detection.
-- Verified installation into an isolated empty profile with
-  `dsh plugin --profile smoke add` and `dsh --dump-config`.
+- 包名改为 `dsh-plugin-overview`。
+- 补齐发布元数据、MIT 许可和 DSH 0.2.1-rc.x 的兼容范围。
+- 状态迁移到 `$DSH_HOME/plugin-overview/state.json`；如果存在旧的
+  `$DSH_HOME/plugin-control-center/state.json` 或
+  `$DSH_HOME/plugin-dashboard/state.json`，首次启动会自动导入一次。
+- 状态写入改为先写临时文件再原子替换。
+- 安装/更新时的自动 AI 总结默认关闭，可在标题栏手动开启。
+- 使用独立的 API 命名空间 `/plugin-overview/*`。
+- 主面板入口和主侧栏顺序改为读取实时 `sidebar.panellist` 台账，
+  不再写死 B站/Aurabot 等锚点。
+- 视觉冲突检测改为根据包名、描述和 keywords 识别，不再依赖固定包名列表。
+- 分组重命名改为内置输入框，不再使用 `window.prompt`。
+- 增加 `node:test` 测试，覆盖状态归一化和视觉插件识别。
+- 使用隔离的空 profile 验证过
+  `dsh plugin --profile smoke add` 和 `dsh --dump-config`。

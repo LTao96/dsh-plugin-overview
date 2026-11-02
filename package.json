@@ -2,7 +2,7 @@
   "name": "dsh-plugin-overview",
   "version": "0.2.0",
   "license": "MIT",
-  "description": "Local overview for installed DeepSeek Harness plugins: notes, groups, install dates, health checks, enable/disable and settings shortcuts.",
+  "description": "本地插件总览：备注、分组、安装时间、健康检查、启停和设置入口。",
   "type": "module",
   "main": "./index.js",
   "exports": {
