@@ -6,6 +6,16 @@
 
 它**不是插件市场**，也不负责安装、升级或卸载插件。这些操作仍然交给 `dshmarket` 或官方插件管理器。
 
+## 安装
+
+```bash
+dsh plugin --profile <profile> add dsh-plugin-overview
+```
+
+npm 页面：https://www.npmjs.com/package/dsh-plugin-overview
+
+安装后重启 DSH，在 设置 → 插件总览 打开。
+
 ## 入口位置
 
 设置 → **插件总览**（order 130）。
@@ -46,14 +56,6 @@
   `PANEL_IDS` 作为兜底，用于没有暴露侧栏入口的插件。
 - 「主侧栏顺序」通过 CSS `order` 上下移动主侧栏的直连面板按钮，顺序保存在
   localStorage。导航容器通过 `sidebar.panellist` 的实时标签识别；匹配不到时隐藏该控件。
-
-## 安装
-
-```bash
-dsh plugin --profile <profile> add dsh-plugin-overview
-```
-
-安装后重启 DSH，然后打开设置 → 插件总览。
 
 ## 开发
 

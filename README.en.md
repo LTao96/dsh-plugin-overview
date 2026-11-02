@@ -10,6 +10,16 @@ It is **not a marketplace** and does not install, upgrade or uninstall
 packages. Those operations stay with `dshmarket` or the official plugin
 manager.
 
+## Install
+
+```bash
+dsh plugin --profile <profile> add dsh-plugin-overview
+```
+
+npm page: https://www.npmjs.com/package/dsh-plugin-overview
+
+Restart DSH, then open Settings → 插件总览.
+
 ## Where it appears
 
 Settings → **插件总览** (order 130).
@@ -61,14 +71,6 @@ Settings → **插件总览** (order 130).
 - “主侧栏顺序” moves direct panel buttons in the main sidebar up/down with CSS
   `order`, persisted in localStorage. The nav container is recognized from the
   live `sidebar.panellist` labels; if no labels match, the control is hidden.
-
-## Install
-
-```bash
-dsh plugin --profile <profile> add dsh-plugin-overview
-```
-
-Restart DSH, then open Settings → 插件总览.
 
 ## Development
 
