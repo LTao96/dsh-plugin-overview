@@ -1,5 +1,7 @@
 # dsh-plugin-overview
 
+**简体中文** · [English](./README.en.md)
+
 一个面向 **DeepSeek Harness 已安装插件** 的本地总览面板：每个 profile 依赖占一行，集中显示一句话备注、分组、状态、安装时间、启停按钮、设置入口和第一层健康检查。
 
 它**不是插件市场**，也不负责安装、升级或卸载插件。这些操作仍然交给 `dshmarket` 或官方插件管理器。

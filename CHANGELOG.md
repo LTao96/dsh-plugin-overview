@@ -1,5 +1,7 @@
 # 更新记录
 
+**简体中文** · [English](./CHANGELOG.en.md)
+
 ## 0.2.0
 
 - 包名改为 `dsh-plugin-overview`。
