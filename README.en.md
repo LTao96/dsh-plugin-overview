@@ -91,6 +91,11 @@ DSH_HOME=/tmp/dsh-smoke dsh plugin --profile smoke add <absolute-package-path>
 DSH_HOME=/tmp/dsh-smoke dsh --profile smoke --dump-config
 ```
 
+## Documentation
+
+- [GitHub upload and release guide (Chinese)](https://github.com/LTao96/dsh-plugin-overview/blob/main/docs/GITHUB_RELEASE_GUIDE.md)
+- [npm publish and update guide (Chinese)](https://github.com/LTao96/dsh-plugin-overview/blob/main/docs/NPM_PUBLISH_GUIDE.md)
+
 ## License
 
 MIT.

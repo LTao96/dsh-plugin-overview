@@ -76,6 +76,11 @@ DSH_HOME=/tmp/dsh-smoke dsh plugin --profile smoke add <插件目录绝对路径
 DSH_HOME=/tmp/dsh-smoke dsh --profile smoke --dump-config
 ```
 
+## 文档
+
+- [GitHub 上传与发布流程](https://github.com/LTao96/dsh-plugin-overview/blob/main/docs/GITHUB_RELEASE_GUIDE.md)
+- [npm 发布与更新流程](https://github.com/LTao96/dsh-plugin-overview/blob/main/docs/NPM_PUBLISH_GUIDE.md)
+
 ## 许可
 
 MIT。
