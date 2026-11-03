@@ -24,6 +24,18 @@
 - GitHub Release 是**发布说明页**
 - 三者互相独立，但通常一起更新
 
+## 本次操作记录（2026-11-03）
+
+- 仓库 Description 已设置：
+  `本地插件总览：备注、分组、健康检查、启停和设置入口。`
+- Website 已设置：
+  `https://www.npmjs.com/package/dsh-plugin-overview`
+- Topics 已设置：
+  `dsh-plugin`、`deepseek-harness`、`dsh`、`plugin-manager`
+- 本地 `main` 比 `origin/main` 多 5 个 commit
+- GitHub push 当前受网络影响，提交留在本地
+- 等推送成功后，GitHub 才会看到最新文档
+
 ## 2. 首次上传
 
 ### 2.1 创建 GitHub 仓库
@@ -101,6 +113,96 @@ git rev-parse origin/main
 ```
 
 两个 hash 相同，说明本地和远程一致。
+
+### 2.6 仓库元数据：Description、Website、Topics
+
+这三项不影响代码，但影响别人能否发现和理解仓库。
+
+#### Description
+
+```text
+本地插件总览：备注、分组、健康检查、启停和设置入口。
+```
+
+作用：仓库首页和搜索结果里的一句话介绍。
+
+#### Website
+
+```text
+https://www.npmjs.com/package/dsh-plugin-overview
+```
+
+作用：把 GitHub 仓库和 npm 包关联起来，用户不用自己找。
+
+#### Topics
+
+建议：
+
+```text
+dsh-plugin
+deepseek-harness
+dsh
+plugin-manager
+```
+
+其中 **`dsh-plugin` 必须是单数，且完全一致**。
+
+作用：
+
+- GitHub 的话题搜索
+- `awesome-dsh-plugin` 目录的识别要求
+- dshfind / dshmarket 的自动发现
+
+不要选：
+
+```text
+dsh-plugins
+dsh-plugin-market
+dsh-plugin-desktop
+```
+
+这些是其它话题，不是目录要求的标准 topic。
+
+#### 网页操作
+
+```text
+仓库首页 → 右侧 About 齿轮 → Edit repository details
+```
+
+填写 Description、Website、Topics，然后 Save changes。
+
+#### API 操作
+
+更新仓库描述和主页：
+
+```http
+PATCH /repos/LTao96/dsh-plugin-overview
+```
+
+```json
+{
+  "description": "本地插件总览：备注、分组、健康检查、启停和设置入口。",
+  "homepage": "https://www.npmjs.com/package/dsh-plugin-overview"
+}
+```
+
+更新 Topics 不是用 PATCH，而是专用端点：
+
+```http
+PUT /repos/LTao96/dsh-plugin-overview/topics
+```
+
+```json
+{
+  "names": ["dsh-plugin", "deepseek-harness", "dsh", "plugin-manager"]
+}
+```
+
+注意：
+
+- 用 `PATCH /repos/...` 传 `topics` 可能返回 200，但不会真正更新 Topics
+- Topics 要用 `PUT /repos/.../topics`
+- 需要 `public_repo` 或 `repo` 权限的 token
 
 ## 3. 日常更新
 
@@ -253,6 +355,43 @@ dshfind 和 dshmarket 的索引都来自
 - 有真实可用代码
 - 添加 `dsh-plugin` topic
 - 一个 PR 最多添加 3 个条目
+
+### “仓库满 1 天”怎么算
+
+不是按自然日，也不是按最后一次 commit，而是按仓库创建时间往后 24 小时。
+
+查询：
+
+```powershell
+Invoke-RestMethod -Uri https://api.github.com/repos/LTao96/dsh-plugin-overview |
+  Select-Object created_at, pushed_at
+```
+
+示例：
+
+```text
+created_at: 2026-11-02T07:36:53Z
+```
+
+换算北京时间：
+
+```text
+2026-11-02 15:36:53
+```
+
+满 24 小时：
+
+```text
+2026-11-03T07:36:53Z
+2026-11-03 15:36:53 北京时间
+```
+
+所以：
+
+- `created_at` 决定“仓库年龄”
+- `pushed_at` 只是最后一次推送时间
+- 最后 commit 时间不影响这条规则
+- 时间统一按 UTC 计算
 
 ### 6.2 提交文件
 

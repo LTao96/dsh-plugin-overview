@@ -7,6 +7,16 @@
 - 当前版本：`0.2.1`
 - npm 页面：https://www.npmjs.com/package/dsh-plugin-overview
 
+## 本次发布记录（2026-11-03）
+
+- `0.2.1` 已发布成功
+- `latest` 指向 `0.2.1`
+- `0.0.0-stage` 是 npm staged publish 占位，不是正式版本
+- 发布时曾因 registry 被改成 npmmirror 出现 `ENEEDAUTH`
+- 切回官方 registry 后登录态恢复
+- 刚发布后 `npm view` 短暂 404，等 CDN 缓存刷新后恢复
+- 干净 profile 从 npm 安装 `0.2.1` 并 `dsh --dump-config` 验证通过
+
 ## 1. npm 是什么
 
 npm 负责：
