@@ -32,7 +32,8 @@
   `https://www.npmjs.com/package/dsh-plugin-overview`
 - Topics 已设置：
   `dsh-plugin`、`deepseek-harness`、`dsh`、`plugin-manager`
-- 本地 `main` 比 `origin/main` 多 5 个 commit
+- `v0.2.0` Release 已存在，标题和正文已补全
+- 本地 `main` 比 `origin/main` 多 6 个 commit
 - GitHub push 当前受网络影响，提交留在本地
 - 等推送成功后，GitHub 才会看到最新文档
 
