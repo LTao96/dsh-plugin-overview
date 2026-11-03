@@ -45,5 +45,8 @@ description:
 ## 当前状态
 
 - GitHub 仓库已创建
-- npm `dsh-plugin-overview@0.2.0` 已发布
-- 等仓库满 1 天后提交 PR
+- npm `dsh-plugin-overview@0.2.1` 已发布
+- 仓库已添加 `dsh-plugin` topic
+- 目录 PR 已提交：
+  https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/11613
+- 等待 CI 和维护者审核

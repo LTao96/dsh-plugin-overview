@@ -37,7 +37,8 @@
 - 本地与 `origin/main` 已同步
 - awesome-dsh-plugin 已 fork，分支和条目文件已准备：
   `add-LTao96-dsh-plugin-overview`
-- 等仓库满 24 小时后打开 PR
+- 目录 PR 已提交：
+  https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/11613
 - GitHub push 当前受网络影响，提交留在本地
 - 等推送成功后，GitHub 才会看到最新文档
 
