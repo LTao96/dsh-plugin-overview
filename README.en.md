@@ -2,13 +2,14 @@
 
 [简体中文](./README.md) · **English**
 
-A local overview for installed DeepSeek Harness plugins: one row per profile
-dependency, with a one-line note, group, status, install date, enable/disable,
-settings shortcut and first-layer health checks.
+A local overview of installed DeepSeek Harness plugins. It does not install
+packages — pair it with a plugin market. Fold third-party plugin settings,
+organize notes and groups with AI, run health checks, and toggle plugins, so
+nothing gets lost in clutter.
 
 It is **not a marketplace** and does not install, upgrade or uninstall
-packages. Those operations stay with `dshmarket` or the official plugin
-manager.
+packages. Downloading and updates stay with `dshmarket` or the official plugin
+manager; organizing and inspecting installed plugins happens here.
 
 ## Install
 

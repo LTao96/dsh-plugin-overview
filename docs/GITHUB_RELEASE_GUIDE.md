@@ -26,8 +26,8 @@
 
 ## 本次操作记录（2026-11-03）
 
-- 仓库 Description 已设置：
-  `本地插件总览：备注、分组、健康检查、启停和设置入口。`
+- 仓库 Description 已更新为：
+  `本地已装插件总览：不下载插件，和插件市场搭配；一键收纳第三方插件设置，AI 整理备注与分组，配合健康诊断和启停，让插件不再乱而不知。`
 - Website 已设置：
   `https://www.npmjs.com/package/dsh-plugin-overview`
 - Topics 已设置：
@@ -35,12 +35,11 @@
 - `v0.2.0` Release 已存在，标题和正文已补全
 - `v0.2.1` tag 和 Release 已创建
 - 本地与 `origin/main` 已同步
-- awesome-dsh-plugin 已 fork，分支和条目文件已准备：
-  `add-LTao96-dsh-plugin-overview`
-- 目录 PR 已提交：
+- 初始目录 PR 已合并：
   https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/11613
-- GitHub push 当前受网络影响，提交留在本地
-- 等推送成功后，GitHub 才会看到最新文档
+- 说明更新 PR 已提交：
+  https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/11911
+- 等待说明更新 PR 的 CI 和维护者审核
 
 ## 2. 首次上传
 
