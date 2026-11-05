@@ -333,6 +333,10 @@ async function autoSummarize(ctx, home, dir) {
 }
 
 function normalizeEnabled(bundle, rowEntries, singleEntry) {
+  // A bundle-level switch wins over individual loader rows. After
+  // setBundleEnabled(false), the rows can still report enabled: true until the
+  // host tears them down; ignoring that made the UI snap back to "enabled".
+  if (bundle !== undefined && bundle?.enabled === false) return false;
   if (rowEntries.length > 0) return rowEntries.some((row) => row.enabled !== false);
   if (singleEntry !== undefined) return singleEntry.enabled !== false;
   return bundle?.enabled !== false;
@@ -381,7 +385,9 @@ async function buildData(ctx) {
       const singleEntry = pluginByModule.get(name);
       const entries = rowEntries.length > 0 ? rowEntries : singleEntry ? [singleEntry] : [];
       const failed = entries.some((entry) => entry.fiberPhase === 'failed');
-      const running = entries.some((entry) => entry.enabled !== false && entry.fiberPhase === 'active');
+      const enabled = normalizeEnabled(bundle, rowEntries, singleEntry);
+      const running = enabled && entries.some((entry) => entry.enabled !== false && entry.fiberPhase === 'active');
+      const activeRows = enabled ? rowEntries.filter((row) => row.enabled !== false).length : 0;
       const meta = readPackageLocale(pkgDir);
       const noteEntry = notes[name];
       const note = typeof noteEntry?.text === 'string' && noteEntry.text.trim() !== '' ? noteEntry.text : '';
@@ -392,7 +398,7 @@ async function buildData(ctx) {
         name: meta?.title || name,
         packageName: name,
         version: bundle?.version || pkg.version || dependencies[name] || '',
-        enabled: normalizeEnabled(bundle, rowEntries, singleEntry),
+        enabled,
         visual: isVisualPackage(name, pkg),
         failed,
         running,
@@ -408,7 +414,7 @@ async function buildData(ctx) {
         installedAt: when.iso,
         installedAtApproximate: when.approximate,
         rows: rowEntries.length,
-        activeRows: rowEntries.filter((row) => row.enabled !== false).length,
+        activeRows,
       };
     });
   const rank = new Map(groupOrder.map((group, index) => [group, index]));
@@ -823,4 +829,4 @@ export function apply(ctx) {
   }, 'plugin-overview: auto summaries');
 }
 
-export { emptyState, isVisualPackage, normalizeState };
+export { emptyState, isVisualPackage, normalizeEnabled, normalizeState };

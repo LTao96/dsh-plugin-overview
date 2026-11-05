@@ -779,6 +779,10 @@ window.__ModuleLoader__.load({
           const app = body.result?.application;
           setNotice(`${row.name}：${row.enabled ? copy.off : copy.on}${app === 'restart-required' ? ` · ${copy.restart}` : ''}`);
           setSelected(null);
+          // Give the loader tree a moment to settle before re-reading it.
+          // Without this, listBundles can still expose the pre-toggle bundle
+          // for one render and the next click sends the same direction again.
+          await new Promise((resolve) => setTimeout(resolve, 150));
           await reload();
         } catch (error) {
           setNotice(`${copy.failed}: ${error instanceof Error ? error.message : String(error)}`);

@@ -2,6 +2,19 @@
 
 **简体中文** · [English](./CHANGELOG.en.md)
 
+## 0.2.2
+
+- 修复 bundle 启停后状态显示不更新的问题。
+- bundle 已禁用时不再被 Loader 行的旧 `enabled` 状态覆盖。
+- 禁用后 `activeRows` 归零；再次启用可以正确恢复。
+- 启停后等待加载器状态稳定再刷新列表。
+
+## 0.2.1
+
+- 首页补充安装命令和 npm 链接。
+- 补齐中英文 README / CHANGELOG。
+- 增加 GitHub 与 npm 发布指南。
+
 ## 0.2.0
 
 - 包名改为 `dsh-plugin-overview`。

@@ -2,6 +2,20 @@
 
 [简体中文](./CHANGELOG.md) · **English**
 
+## 0.2.2
+
+- Fixed stale enabled/disabled state after toggling a bundle.
+- A disabled bundle is no longer overridden by stale `enabled: true` loader
+  rows.
+- `activeRows` becomes zero when disabled and restores correctly when enabled.
+- Wait briefly for the loader tree to settle before refreshing the list.
+
+## 0.2.1
+
+- Added the install command and npm link to the README.
+- Completed the Chinese/English README and CHANGELOG.
+- Added GitHub and npm publishing guides.
+
 ## 0.2.0
 
 - Renamed the package to `dsh-plugin-overview`.

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { isVisualPackage, normalizeState } from '../index.js';
+import { isVisualPackage, normalizeEnabled, normalizeState } from '../index.js';
 
 test('defaults keep automatic AI summaries off', () => {
   const state = normalizeState(null);
@@ -27,6 +27,13 @@ test('normalization keeps notes, groups and explicit opt-in', () => {
   assert.equal(state.notes.beta.text, 'legacy string');
   assert.deepEqual(state.groups.tools, ['alpha', 'missing']);
   assert.deepEqual(state.groupOrder, ['tools']);
+});
+
+test('bundle disabled wins over stale enabled loader rows', () => {
+  assert.equal(normalizeEnabled({ enabled: false }, [{ enabled: true }], undefined), false);
+  assert.equal(normalizeEnabled({ enabled: true }, [{ enabled: false }], undefined), false);
+  assert.equal(normalizeEnabled({ enabled: true }, [{ enabled: true }], undefined), true);
+  assert.equal(normalizeEnabled(undefined, [], { enabled: false }), false);
 });
 
 test('visual detection does not depend on a fixed package list', () => {
