@@ -54,8 +54,10 @@ npm 页面：https://www.npmjs.com/package/dsh-plugin-overview
   和设置提示。
 - 主面板入口会自动匹配实时的 `sidebar.panellist` 台账；少量已知面板通过
   `PANEL_IDS` 作为兜底，用于没有暴露侧栏入口的插件。
-- 「主侧栏顺序」通过 CSS `order` 上下移动主侧栏的直连面板按钮，顺序保存在
-  localStorage。导航容器通过 `sidebar.panellist` 的实时标签识别；匹配不到时隐藏该控件。
+- 「主侧栏顺序」通过 CSS `order` 上下移动主侧栏的直连面板按钮，并可为每个入口
+  单独勾选显示/隐藏；顺序和隐藏状态保存在 localStorage。核心入口（插件、设置、
+  「更多」）不能隐藏。导航容器通过 `sidebar.panellist` 的实时标签识别；匹配不到时
+  隐藏该控件。
 
 ## 开发
 

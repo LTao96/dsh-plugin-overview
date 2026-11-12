@@ -70,8 +70,10 @@ Settings → **插件总览** (order 130).
 - Main-panel shortcuts auto-match the live `sidebar.panellist` ledger; a small
   `PANEL_IDS` fallback covers known panels that do not expose a sidebar entry.
 - “主侧栏顺序” moves direct panel buttons in the main sidebar up/down with CSS
-  `order`, persisted in localStorage. The nav container is recognized from the
-  live `sidebar.panellist` labels; if no labels match, the control is hidden.
+  `order`, and each entry can be shown or hidden with a checkbox. Order and
+  visibility persist in localStorage. Core entries (Plugins, Settings, More)
+  cannot be hidden. The nav container is recognized from the live
+  `sidebar.panellist` labels; if no labels match, the control is hidden.
 
 ## Development
 

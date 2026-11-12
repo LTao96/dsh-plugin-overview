@@ -2,6 +2,13 @@
 
 [简体中文](./CHANGELOG.md) · **English**
 
+## 0.2.3
+
+- Added per-entry show/hide controls to main-sidebar ordering.
+- Visibility persists in localStorage together with the order.
+- Core entries (Plugins, Settings, More) cannot be hidden.
+- Main-sidebar buttons are recognized by text, aria-label and title.
+
 ## 0.2.2
 
 - Fixed stale enabled/disabled state after toggling a bundle.

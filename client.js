@@ -7,6 +7,8 @@ window.__ModuleLoader__.load({
     const FOLD_KEY = 'dsh-plugin-overview:fold-third-party';
     const FOLD_EXCLUDED_KEY = 'dsh-plugin-overview:fold-excluded';
     const PANEL_ORDER_KEY = 'dsh-plugin-overview:panel-order';
+    const PANEL_HIDDEN_KEY = 'dsh-plugin-overview:panel-hidden';
+    const PROTECTED_PANEL_LABELS = new Set(['插件', '设置', '更多', 'Plugins', 'Settings', 'More']);
     let foldController = null;
     let sectionStore = null;
     let panelStore = null;
@@ -92,8 +94,10 @@ window.__ModuleLoader__.load({
         panelOpened: '已打开面板：',
         noPanel: '没有可打开的主面板',
         sideOrder: '主侧栏顺序',
-        sideHint: '上下移动主界面左侧的插件入口；「更多」保持在最后。只在本机浏览器生效。',
+        sideHint: '勾选控制是否显示；上下移动调整顺序；「更多」保持在最后。只在本机浏览器生效。',
         sideEmpty: '未找到主侧栏',
+        panelVisible: '在主侧栏显示',
+        panelProtected: '核心入口不能隐藏',
         up: '上移',
         down: '下移',
         resetOrder: '恢复默认',
@@ -178,8 +182,10 @@ window.__ModuleLoader__.load({
         panelOpened: 'Opened panel: ',
         noPanel: 'No main panel to open',
         sideOrder: 'Main sidebar order',
-        sideHint: 'Move main-sidebar plugin entries up or down. “More” stays last. Local to this browser.',
+        sideHint: 'Check to show or hide; move entries up/down. “More” stays last. Local to this browser.',
         sideEmpty: 'Main sidebar not found',
+        panelVisible: 'Show in main sidebar',
+        panelProtected: 'Core entry cannot be hidden',
         up: 'Up',
         down: 'Down',
         resetOrder: 'Reset',
@@ -449,6 +455,10 @@ window.__ModuleLoader__.load({
       return sections;
     }
 
+    function panelButtonLabel(button) {
+      return String(button.textContent || button.getAttribute('aria-label') || button.getAttribute('title') || '').trim();
+    }
+
     function findPanelNav() {
       const labels = new Set((panelStore?.list() || []).map((panel) => panel.label).filter(Boolean));
       if (labels.size === 0) return null;
@@ -457,7 +467,7 @@ window.__ModuleLoader__.load({
       let bestScore = 0;
       for (const nav of navs) {
         const buttons = Array.from(nav.querySelectorAll('button')).filter((button) => button.parentElement === nav);
-        const texts = buttons.map((button) => String(button.textContent || button.getAttribute('aria-label') || button.getAttribute('title') || '').trim());
+        const texts = buttons.map(panelButtonLabel);
         const score = texts.filter((text) => labels.has(text)).length;
         if (score > bestScore) { best = { nav, buttons, texts }; bestScore = score; }
       }
@@ -465,7 +475,7 @@ window.__ModuleLoader__.load({
     }
 
     function panelLabels() {
-      return findPanelNav()?.texts || [];
+      return (findPanelNav()?.texts || []).filter(Boolean);
     }
 
     function readPanelOrder() {
@@ -481,15 +491,30 @@ window.__ModuleLoader__.load({
       try { localStorage.setItem(PANEL_ORDER_KEY, JSON.stringify(order)); } catch {}
     }
 
-    function applyPanelOrder(order) {
+    function readPanelHidden() {
+      try {
+        const value = JSON.parse(localStorage.getItem(PANEL_HIDDEN_KEY) || '[]');
+        return new Set(Array.isArray(value) ? value.filter((item) => typeof item === 'string') : []);
+      } catch {
+        return new Set();
+      }
+    }
+
+    function writePanelHidden(hidden) {
+      try { localStorage.setItem(PANEL_HIDDEN_KEY, JSON.stringify([...hidden])); } catch {}
+    }
+
+    function applyPanelOrder(order, hidden) {
       const found = findPanelNav();
       if (!found) return;
       const rank = new Map(order.map((label, index) => [label, index]));
       for (const button of found.buttons) {
-        const label = String(button.textContent || '').trim();
+        const label = panelButtonLabel(button);
         const index = rank.get(label);
         if (index === undefined) button.style.removeProperty('order');
         else button.style.order = String(index);
+        if (hidden.has(label) && !PROTECTED_PANEL_LABELS.has(label)) button.style.display = 'none';
+        else button.style.removeProperty('display');
       }
       for (const child of found.nav.children) {
         if (child.tagName === 'BUTTON') continue;
@@ -499,14 +524,20 @@ window.__ModuleLoader__.load({
 
     function clearPanelOrder() {
       const found = findPanelNav();
-      if (!found) return;
-      for (const child of found.nav.children) child.style.removeProperty('order');
-      try { localStorage.removeItem(PANEL_ORDER_KEY); } catch {}
+      if (found) {
+        for (const child of found.nav.children) child.style.removeProperty('order');
+        for (const button of found.buttons) button.style.removeProperty('display');
+      }
+      try {
+        localStorage.removeItem(PANEL_ORDER_KEY);
+        localStorage.removeItem(PANEL_HIDDEN_KEY);
+      } catch {}
     }
 
     function usePanelOrder() {
       const [labels, setLabels] = useState([]);
       const [order, setOrder] = useState(readPanelOrder);
+      const [hidden, setHidden] = useState(readPanelHidden);
       const refresh = () => {
         const next = panelLabels();
         setLabels(next);
@@ -523,7 +554,7 @@ window.__ModuleLoader__.load({
         observer.observe(document.body, { childList: true, subtree: true });
         return () => observer.disconnect();
       }, []);
-      useEffect(() => { applyPanelOrder(order); }, [order, labels]);
+      useEffect(() => { applyPanelOrder(order, hidden); }, [order, labels, hidden]);
       const move = (label, delta) => {
         setOrder((prev) => {
           const next = [...prev];
@@ -535,14 +566,25 @@ window.__ModuleLoader__.load({
           return next;
         });
       };
+      const toggleHidden = (label, visible) => {
+        if (PROTECTED_PANEL_LABELS.has(label)) return;
+        setHidden((prev) => {
+          const next = new Set(prev);
+          if (visible) next.delete(label);
+          else next.add(label);
+          writePanelHidden(next);
+          return next;
+        });
+      };
       const reset = () => {
         clearPanelOrder();
         const next = panelLabels();
         setOrder(next);
         setLabels(next);
+        setHidden(new Set());
       };
       const ordered = [...order.filter((label) => labels.includes(label)), ...labels.filter((label) => !order.includes(label))];
-      return { labels: ordered, move, reset };
+      return { labels: ordered, hidden, move, toggleHidden, reset };
     }
 
     function createFoldController(getSections) {
@@ -1076,7 +1118,18 @@ window.__ModuleLoader__.load({
             ? h('div', { className: 'pd-muted' }, copy.sideEmpty)
             : h('div', { className: 'pd-side-list' },
               panelOrder.labels.map((label, index) => h('div', { className: 'pd-side-row', key: label },
-                h('span', { className: 'pd-side-label' }, label),
+                h('label', {
+                  className: 'pd-check',
+                  title: PROTECTED_PANEL_LABELS.has(label) ? copy.panelProtected : copy.panelVisible,
+                },
+                  h('input', {
+                    type: 'checkbox',
+                    checked: !panelOrder.hidden.has(label),
+                    disabled: PROTECTED_PANEL_LABELS.has(label),
+                    onChange: (event) => panelOrder.toggleHidden(label, event.target.checked),
+                  }),
+                  h('span', { className: 'pd-side-label' }, label)
+                ),
                 h('button', {
                   type: 'button',
                   className: 'pd-side-btn',
