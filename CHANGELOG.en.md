@@ -2,6 +2,13 @@
 
 [简体中文](./CHANGELOG.md) · **English**
 
+## 0.2.4
+
+- Fixed the main-sidebar detector incorrectly selecting the settings sidebar.
+- Limited candidates to 2-20 buttons so the settings sections cannot win.
+- Only list entries that match the live `sidebar.panellist` labels.
+- Keep the “Reset” action available when the main sidebar cannot be found.
+
 ## 0.2.3
 
 - Added per-entry show/hide controls to main-sidebar ordering.

@@ -461,21 +461,44 @@ window.__ModuleLoader__.load({
 
     function findPanelNav() {
       const labels = new Set((panelStore?.list() || []).map((panel) => panel.label).filter(Boolean));
-      if (labels.size === 0) return null;
-      const navs = Array.from(document.querySelectorAll('nav'));
+      const candidates = new Set([
+        ...document.querySelectorAll('nav'),
+        ...document.querySelectorAll('aside'),
+        ...document.querySelectorAll('[role="navigation"]'),
+        ...document.querySelectorAll('[class*="sidebar" i]'),
+      ]);
+      // Newer DSH shells are not guaranteed to use <nav>. Any container whose
+      // direct children are panel buttons is a candidate; icon-only buttons
+      // are the strongest signal for the primary sidebar.
+      for (const element of document.querySelectorAll('div, section')) {
+        const childButtons = element.querySelectorAll(':scope > button, :scope > * > button');
+        if (childButtons.length >= 2 && childButtons.length <= 30) candidates.add(element);
+      }
       let best = null;
       let bestScore = 0;
-      for (const nav of navs) {
-        const buttons = Array.from(nav.querySelectorAll('button')).filter((button) => button.parentElement === nav);
+      for (const nav of candidates) {
+        const buttons = Array.from(nav.querySelectorAll('button'))
+          .filter((button) => !button.closest('[data-plugin-overview]'));
+        // The primary sidebar has a handful of panel icons. A settings nav
+        // can expose dozens of section buttons; do not let it win.
+        if (buttons.length < 2 || buttons.length > 20) continue;
         const texts = buttons.map(panelButtonLabel);
-        const score = texts.filter((text) => labels.has(text)).length;
+        const matches = texts.filter((text) => labels.has(text)).length;
+        if (labels.size > 0 && matches === 0) continue;
+        const iconButtons = buttons.filter((button) => panelButtonLabel(button) === '' && button.querySelector('svg')).length;
+        const fallbackScore = iconButtons > 0 ? iconButtons * 100 - buttons.length : 100 - buttons.length;
+        const score = labels.size > 0 ? matches * 100 - buttons.length : fallbackScore;
         if (score > bestScore) { best = { nav, buttons, texts }; bestScore = score; }
       }
       return best;
     }
 
     function panelLabels() {
-      return (findPanelNav()?.texts || []).filter(Boolean);
+      const texts = (findPanelNav()?.texts || []).filter(Boolean);
+      const known = new Set((panelStore?.list() || []).map((panel) => panel.label).filter(Boolean));
+      // Do not list “new session / collapse sidebar / unpin” controls as
+      // reorderable panel entries.
+      return known.size > 0 ? texts.filter((text) => known.has(text)) : texts;
     }
 
     function readPanelOrder() {
@@ -1144,7 +1167,7 @@ window.__ModuleLoader__.load({
                 }, copy.down)
               ))
             ),
-          panelOrder.labels.length > 0 && h('button', {
+          (panelOrder.labels.length > 0 || panelOrder.hidden.size > 0) && h('button', {
             type: 'button',
             className: 'pd-refresh',
             onClick: panelOrder.reset,
