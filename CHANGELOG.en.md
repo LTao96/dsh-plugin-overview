@@ -2,6 +2,16 @@
 
 [简体中文](./CHANGELOG.md) · **English**
 
+## 0.2.5
+
+- Main-sidebar moves now use CSS order and real DOM reordering, for hosts that
+  ignore order.
+- Hiding an entry hides both the wrapper and the inner button with
+  `display: none !important`.
+- Reset clears both layers.
+- The sidebar diagnostic now records wrapper/button tag, class, display and
+  inline style.
+
 ## 0.2.4
 
 - Fixed the main-sidebar detector incorrectly selecting the settings sidebar.

@@ -2,6 +2,13 @@
 
 **简体中文** · [English](./CHANGELOG.en.md)
 
+## 0.2.5
+
+- 主侧栏上下移动同时使用 CSS order 和真实 DOM 重排，兼容不按 order 排版的宿主。
+- 隐藏入口时同时隐藏包裹层和内部按钮，使用 `display: none !important`。
+- 恢复默认会同时清理这两层的样式。
+- 「诊断侧栏」增加包裹层/按钮的标签、class、display 和 inline style。
+
 ## 0.2.4
 
 - 修复主侧栏检测误把设置侧栏当成主侧栏的问题。

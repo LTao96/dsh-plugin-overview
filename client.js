@@ -488,7 +488,15 @@ window.__ModuleLoader__.load({
         const iconButtons = buttons.filter((button) => panelButtonLabel(button) === '' && button.querySelector('svg')).length;
         const fallbackScore = iconButtons > 0 ? iconButtons * 100 - buttons.length : 100 - buttons.length;
         const score = labels.size > 0 ? matches * 100 - buttons.length : fallbackScore;
-        if (score > bestScore) { best = { nav, buttons, texts }; bestScore = score; }
+        if (score > bestScore) {
+          const items = buttons.map((button) => {
+            let element = button;
+            while (element.parentElement && element.parentElement !== nav) element = element.parentElement;
+            return { button, element: element.parentElement === nav ? element : button };
+          });
+          best = { nav, buttons, texts, items };
+          bestScore = score;
+        }
       }
       return best;
     }
@@ -531,17 +539,45 @@ window.__ModuleLoader__.load({
       const found = findPanelNav();
       if (!found) return;
       const rank = new Map(order.map((label, index) => [label, index]));
-      for (const button of found.buttons) {
-        const label = panelButtonLabel(button);
+      // Order/visibility must be applied to the direct child of the sidebar
+      // container, not the <button> inside a wrapper.
+      for (const item of found.items) {
+        const label = panelButtonLabel(item.button);
         const index = rank.get(label);
-        if (index === undefined) button.style.removeProperty('order');
-        else button.style.order = String(index);
-        if (hidden.has(label) && !PROTECTED_PANEL_LABELS.has(label)) button.style.display = 'none';
-        else button.style.removeProperty('display');
+        const hide = hidden.has(label) && !PROTECTED_PANEL_LABELS.has(label);
+        for (const node of [item.element, item.button]) {
+          if (index === undefined) node.style.removeProperty('order');
+          else node.style.order = String(index);
+          if (hide) node.style.setProperty('display', 'none', 'important');
+          else node.style.removeProperty('display');
+        }
       }
       for (const child of found.nav.children) {
         if (child.tagName === 'BUTTON') continue;
         if (String(child.textContent || '').trim().startsWith('更多')) child.style.order = '999';
+      }
+      // Some host shells render the sidebar as a plain block/stack where CSS
+      // order is ignored. Reorder the panel wrappers themselves as a fallback,
+      // but only when the DOM order actually differs from the saved order.
+      const ranked = found.items
+        .filter((item) => rank.has(panelButtonLabel(item.button)))
+        .sort((left, right) => rank.get(panelButtonLabel(left.button)) - rank.get(panelButtonLabel(right.button)));
+      if (ranked.length > 1) {
+        const parent = ranked[0].element.parentElement;
+        if (parent && ranked.every((item) => item.element.parentElement === parent)) {
+          const current = Array.from(parent.children)
+            .filter((child) => ranked.some((item) => item.element === child))
+            .map((child) => Array.from(parent.children).indexOf(child));
+          const expected = ranked.map((item) => Array.from(parent.children).indexOf(item.element));
+          if (current.join(',') !== expected.join(',')) {
+            const marker = document.createComment('plugin-overview-panel-order');
+            parent.insertBefore(marker, ranked[0].element);
+            const fragment = document.createDocumentFragment();
+            for (const item of ranked) fragment.appendChild(item.element);
+            parent.insertBefore(fragment, marker);
+            marker.remove();
+          }
+        }
       }
     }
 
@@ -549,7 +585,12 @@ window.__ModuleLoader__.load({
       const found = findPanelNav();
       if (found) {
         for (const child of found.nav.children) child.style.removeProperty('order');
-        for (const button of found.buttons) button.style.removeProperty('display');
+        for (const item of found.items) {
+          for (const node of [item.element, item.button]) {
+            node.style.removeProperty('order');
+            node.style.removeProperty('display');
+          }
+        }
       }
       try {
         localStorage.removeItem(PANEL_ORDER_KEY);
@@ -1030,6 +1071,23 @@ window.__ModuleLoader__.load({
 
       const reportNav = async () => {
         const nav = [];
+        const found = findPanelNav();
+        if (found) {
+          nav.push({
+            navTag: found.nav.tagName,
+            navClass: String(found.nav.className || '').slice(0, 120),
+            navParent: found.nav.parentElement?.tagName || '',
+            items: found.items.slice(0, 30).map((item) => ({
+              text: panelButtonLabel(item.button).slice(0, 60),
+              elementTag: item.element.tagName,
+              elementClass: String(item.element.className || '').slice(0, 120),
+              elementDisplay: getComputedStyle(item.element).display,
+              elementStyle: item.element.getAttribute('style') || '',
+              buttonDisplay: getComputedStyle(item.button).display,
+              buttonStyle: item.button.getAttribute('style') || '',
+            })),
+          });
+        }
         for (const element of document.querySelectorAll('nav')) {
           const buttons = Array.from(element.querySelectorAll('button')).filter((button) => button.parentElement === element);
           if (buttons.length === 0) continue;
